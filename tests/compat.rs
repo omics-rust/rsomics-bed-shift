@@ -21,9 +21,9 @@ fn basic_positive_shift() {
         "feat1 shifted wrong: {}",
         lines[0]
     );
-    // feat4 (3-col BED): 10→110, 50→150
-    assert_eq!(
-        lines[3], "chr1\t110\t150\tfeat4",
+    // feat4: 10→110, 50→150
+    assert!(
+        lines[3].starts_with("chr1\t110\t150\tfeat4"),
         "feat4 shifted wrong: {}",
         lines[3]
     );

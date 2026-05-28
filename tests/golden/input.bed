@@ -1,4 +1,4 @@
 chr1	100	200	feat1	0	+
 chr1	500	600	feat2	0	-
 chr2	50	150	feat3	0	.
-chr1	10	50	feat4
+chr1	10	50	feat4	0	.

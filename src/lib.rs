@@ -33,9 +33,7 @@ pub fn load_genome(path: &Path) -> Result<HashMap<String, u64>> {
             .ok_or_else(|| RsomicsError::InvalidInput(format!("genome: bad line: {line:?}")))?;
         let size_str = parts
             .next()
-            .ok_or_else(|| {
-                RsomicsError::InvalidInput(format!("genome: missing size for {chrom}"))
-            })?
+            .ok_or_else(|| RsomicsError::InvalidInput(format!("genome: missing size for {chrom}")))?
             .trim();
         let size: u64 = size_str.parse().map_err(|_| {
             RsomicsError::InvalidInput(format!("genome: bad size {size_str:?} for {chrom}"))
