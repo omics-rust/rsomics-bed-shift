@@ -11,7 +11,13 @@ fn bench_bed_shift(c: &mut Criterion) {
     c.bench_function("rsomics-bed-shift golden", |b| {
         b.iter(|| {
             let out = Command::new(black_box(bin))
-                .args([bed.to_str().unwrap(), "-s", "100", "-g", genome.to_str().unwrap()])
+                .args([
+                    bed.to_str().unwrap(),
+                    "-s",
+                    "100",
+                    "-g",
+                    genome.to_str().unwrap(),
+                ])
                 .output()
                 .unwrap();
             assert!(out.status.success());
