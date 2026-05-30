@@ -17,8 +17,6 @@ use std::path::Path;
 
 use rsomics_common::{Result, RsomicsError};
 
-/// Load genome sizes file into a `chrom → size` map.
-/// Each non-comment line is `chrom<TAB>size`.
 pub fn load_genome(path: &Path) -> Result<HashMap<String, u64>> {
     let raw = std::fs::read_to_string(path)
         .map_err(|e| RsomicsError::InvalidInput(format!("{}: {e}", path.display())))?;
@@ -51,11 +49,6 @@ fn is_header(line: &str) -> bool {
         || line.starts_with("browser")
 }
 
-/// Shift BED records from `reader` by `shift` bases, write to `output`.
-///
-/// `plus_shift` / `minus_shift` — per-strand overrides; set equal to `shift`
-///   to disable strand-aware mode.
-/// `genome` — when `Some`, coordinates are clamped and off-end records dropped.
 pub fn shift_reader<R: io::Read>(
     reader: BufReader<R>,
     shift: i64,
@@ -74,7 +67,6 @@ pub fn shift_reader<R: io::Read>(
         }
         let lineno = lineno_0 + 1;
 
-        // Split into at most 6 columns; columns beyond 5 stay joined in col[5].
         let cols: Vec<&str> = line.splitn(7, '\t').collect();
         if cols.len() < 3 {
             return Err(RsomicsError::InvalidInput(format!(
@@ -89,7 +81,6 @@ pub fn shift_reader<R: io::Read>(
             RsomicsError::InvalidInput(format!("line {lineno}: bad end {:?}", cols[2]))
         })?;
 
-        // Column 5 (0-indexed 4) is the strand column in BED6+.
         let strand = if cols.len() >= 6 { cols[5] } else { "." };
         let s = if strand == "+" {
             plus_shift
@@ -114,7 +105,6 @@ pub fn shift_reader<R: io::Read>(
             (new_start, new_end)
         };
 
-        // Reconstruct output: first 3 cols updated, rest pass through verbatim.
         out.write_all(chrom.as_bytes()).map_err(RsomicsError::Io)?;
         write!(out, "\t{new_start}\t{new_end}").map_err(RsomicsError::Io)?;
         for col in &cols[3..] {
@@ -127,7 +117,6 @@ pub fn shift_reader<R: io::Read>(
     Ok(())
 }
 
-/// Shift BED file at `path`.
 pub fn shift(
     path: &Path,
     shift: i64,
@@ -148,7 +137,6 @@ pub fn shift(
     )
 }
 
-/// Same as [`shift`] but reads from stdin.
 pub fn shift_stdin(
     shift_val: i64,
     plus_shift: i64,
